@@ -1,0 +1,19 @@
+[project]
+name = "py2js"
+version = "1.2.2"
+keywords = ["javascript", "convert", "translator"]
+description = "Write javascript in python with python syntax"
+readme = {file = "README.rst", content-type = "text/x-rst"}
+dependencies = [
+    "jsbeautifier (>=1.15.4,<2.0.0)",
+    "strinpy (>=0.0.4,<0.0.5)"
+]
+license = {text = "MIT Licence"}
+authors = [
+    {name = "am230", email = "am.230@outlook.jp" }
+]
+requires-python = ">=3.13"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

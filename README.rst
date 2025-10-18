@@ -128,8 +128,7 @@ translated_normal.js
 ~~~~~~~~~~~~~~~~~~~~
 
 .. code:: javascript
-
-    `generator`;
+    'generator';
     let generator_func = function*() {
         yield 1;
         yield 2;
@@ -140,89 +139,88 @@ translated_normal.js
     for (let item of generator_func()) {
         console.log(item)
     };
-    `for-else`;
+    'for-else';
     __else: {
         for (let i of [0, 1, 2, 3]) {
             if (i > 2) {
                 break __else
             }
         }
-        console.log(`else`)
+        console.log('else')
     };
-    `f-string`;
+    'f-string';
     let a = 4;
     console.log(`${a} fstring`);
-    `class`;
+    'class';
     let Main = class {
+        a;
         constructor() {
             this.a = 1
         };
         func() {
             console.log(this.a)
         }
-        a
     }
     Main = new Proxy(Main, {
         apply: (clazz, thisValue, args) => new clazz(...args)
     });;
     Main().func();
-    `try catch else finally`;
+    'try catch else finally';
     __else: {
         try {
-            throw SyntaxError(`syntax error`)
+            throw SyntaxError('syntax error')
         } catch (__err) {
             if (__err instanceof SyntaxError) {
                 e = __err;
-                console.log(`syntax error raised`);
+                console.log('syntax error raised');
                 break __else
             } {
-                console.log(`excepted`);
+                console.log('excepted');
                 break __else
             }
         }
-        console.log(`else`)
+        console.log('else')
     };
     try {
         if (Boolean(1)) {
-            throw SyntaxError(`syntax error`)
+            throw SyntaxError('syntax error')
         }
     } catch (__err) {
         {
             /* pass */ }
     } finally {
-        console.log(`finally`)
+        console.log('finally')
     };
-    `while`;
+    'while';
     let i = 10;
     while (i > 0) {
         i -= 1
     };
-    `comparator`;
+    'comparator';
     i = 5;
     if (0 < i < 9) {
-        console.log(`true`)
+        console.log('true')
     }
 
 translated_compatible.js
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code:: javascript
-
-    `class with self args`;
+    'class with self args';
     let Main = class {
         constructor(...args) {
             if ('__init__' in this) this.__init__(...args);
             return new Proxy(this, {
                 apply: (target, self, args) => target.__call__(...args),
-                get: (target, key) => target.__getitem__(key)
+                get: (target, key) => target[key] || target.__getitem__(key)
             })
-        }
-        __init__ = (...__args) => {
+        };
+        __init__(...__args) {
             ((self, value) => {
                 self.a = value
             })(this, ...__args)
         };
-        func = (...__args) => {
+        func(...__args) {
             ((self) => {
                 console.log(self.a)
             })(this, ...__args)
@@ -231,7 +229,7 @@ translated_compatible.js
     Main = new Proxy(Main, {
         apply: (clazz, thisValue, args) => new clazz(...args)
     });;
-    Main(`hello, world!`).func()
+    Main('hello, world!').func()
 
 todo
 ----

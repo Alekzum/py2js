@@ -630,7 +630,7 @@ class CodeGen(Visitor[JSVisitorContext]):
         return 'null'
 
 
-SUPPORTED_TYPES = types.FunctionType | types.ModuleType | Callable
+SUPPORTED_TYPES = Union[types.FunctionType, types.ModuleType, Callable]
 
 
 def get_source(source: SUPPORTED_TYPES) -> str:
@@ -701,18 +701,23 @@ def track_imports(target: Path) -> List[Path]:
 
 
 def convert(
-    source: Union[str, ast.AST, SUPPORTED_TYPES],
+    source: Union[None, str, ast.AST, SUPPORTED_TYPES] = None,
     formatter: Callable[[str], str] = jsbeautifier.beautify,
     code_gen: Optional[Visitor] = None,
     compatible: bool = False
 ) -> str:
-    generator = code_gen or CodeGen(compatible=compatible)
+    def inner(source: Union[str, ast.AST, SUPPORTED_TYPES]):
+        generator = code_gen or CodeGen(compatible=compatible)
 
-    if isinstance(source, ast.AST):
-        parsed = source
-    elif isinstance(source, str):
-        parsed = ast.parse(source)
-    else:
-        parsed = ast.parse(get_source(source))
+        if isinstance(source, ast.AST):
+            parsed = source
+        elif isinstance(source, str):
+            parsed = ast.parse(source)
+        else:
+            parsed = ast.parse(get_source(source))
 
-    return formatter(generator.visit(parsed))
+        return formatter(generator.visit(parsed))
+    
+    if source is not None:
+        return inner(source)
+    return inner
